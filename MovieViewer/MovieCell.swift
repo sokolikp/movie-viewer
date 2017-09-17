@@ -12,11 +12,12 @@ class MovieCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var overviewLabel: UILabel!
+    @IBOutlet weak var yearLabel: UILabel!
     @IBOutlet weak var posterImageView: UIImageView!
+    @IBOutlet weak var ratingLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

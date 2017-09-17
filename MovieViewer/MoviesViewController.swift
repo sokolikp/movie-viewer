@@ -44,10 +44,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         super.didReceiveMemoryWarning()
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = false;
-    }
-    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         filteredMovies = movies?.filter({ (movie) -> Bool in
@@ -55,7 +51,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             
             return title.lowercased().contains(searchText.lowercased())
         })
-        print(searchText)
+
         if(searchText.isEmpty){
             isSearching = false;
         } else {
@@ -82,9 +78,17 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let movie = isSearching ? filteredMovies![indexPath.row] : movies![indexPath.row]
         let title = movie["title"] as! String
         let overview = movie["overview"] as! String
+        let fullDate = movie["release_date"] as! String
+        let index = fullDate.index(fullDate.startIndex, offsetBy: 4)
+        let year = fullDate.substring(to: index)
+        let rating = movie["vote_average"] as! NSNumber
         
         cell.titleLabel.text = title
         cell.overviewLabel.text = overview
+        cell.yearLabel.text = year
+        cell.ratingLabel.text = String(describing: rating)
+        cell.ratingLabel.layer.masksToBounds = true
+        cell.ratingLabel.layer.cornerRadius = 5
         
         // try to set movie poster image
         let baseUrl = "https://image.tmdb.org/t/p/w500/"
@@ -106,7 +110,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         // send image separately for convenience
         destinationViewController.movieImage = cell.posterImageView.image
-        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
