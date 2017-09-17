@@ -10,17 +10,22 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     @IBOutlet weak var networkErrorView: UIView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var movieSearchBar: UISearchBar!
     var movies: [NSDictionary]?
+    var filteredMovies: [NSDictionary]?
+    var isSearching: Bool = false
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // hide networking error by default
+        networkErrorView.isHidden = true
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // hide networking error by default
-        networkErrorView.isHidden = true
         
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
@@ -30,6 +35,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         tableView.dataSource = self
         tableView.delegate = self
+        movieSearchBar.delegate = self
+        
         loadData(refreshControl, showInitialLoadSpinner: true)
     }
 
@@ -37,9 +44,33 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         super.didReceiveMemoryWarning()
     }
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        isSearching = false;
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        filteredMovies = movies?.filter({ (movie) -> Bool in
+            let title = movie["title"] as! String
+            
+            return title.lowercased().contains(searchText.lowercased())
+        })
+        print(searchText)
+        if(searchText.isEmpty){
+            isSearching = false;
+        } else {
+            isSearching = true;
+        }
+        self.tableView.reloadData()
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let movies = movies {
-            return movies.count
+            if isSearching {
+                return filteredMovies!.count
+            } else {
+                return movies.count
+            }
         } else {
             return 0
         }
@@ -48,7 +79,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieCell
         
-        let movie = movies![indexPath.row]
+        let movie = isSearching ? filteredMovies![indexPath.row] : movies![indexPath.row]
         let title = movie["title"] as! String
         let overview = movie["overview"] as! String
         
@@ -76,6 +107,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // send image separately for convenience
         destinationViewController.movieImage = cell.posterImageView.image
         
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated:true)
     }
     
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
