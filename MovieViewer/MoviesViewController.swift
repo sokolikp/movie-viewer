@@ -18,6 +18,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     var movies: [NSDictionary]?
     var filteredMovies: [NSDictionary]?
     var isSearching: Bool = false
+    var endpoint: String!
     
     override func viewWillAppear(_ animated: Bool) {
         // hide networking error by default
@@ -126,7 +127,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         self.networkErrorView.isHidden = true
         
         let API_KEY = "f136cf23b2e84e57530d037c649ca5c4"
-        let url = URL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(API_KEY)")
+        let url = URL(string:"https://api.themoviedb.org/3/movie/\(endpoint!)?api_key=\(API_KEY)")
         var request = URLRequest(url: url!)
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         let session = URLSession(
