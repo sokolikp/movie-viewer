@@ -23,10 +23,13 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewWillAppear(_ animated: Bool) {
         // hide networking error by default
         networkErrorView.isHidden = true
+        self.tabBarController?.tabBar.isHidden = false
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tabBarController?.tabBar.isHidden = false
         
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
@@ -83,11 +86,13 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let index = fullDate.index(fullDate.startIndex, offsetBy: 4)
         let year = fullDate.substring(to: index)
         let rating = movie["vote_average"] as! NSNumber
+        let numberFormatter = NumberFormatter()
+        numberFormatter.maximumFractionDigits = 1
         
         cell.titleLabel.text = title
         cell.overviewLabel.text = overview
         cell.yearLabel.text = year
-        cell.ratingLabel.text = String(describing: rating)
+        cell.ratingLabel.text = numberFormatter.string(from: rating)
         cell.ratingLabel.layer.masksToBounds = true
         cell.ratingLabel.layer.cornerRadius = 5
         

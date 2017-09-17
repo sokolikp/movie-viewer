@@ -21,9 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set up the first View Controller
         let nowPlayingNavigationController = storyBoard.instantiateViewController(withIdentifier: "MoviesNavigationController") as! UINavigationController
         let nowPlayingViewController = nowPlayingNavigationController.topViewController as! MoviesViewController
-        
         nowPlayingViewController.endpoint = "now_playing"
-        
         nowPlayingNavigationController.tabBarItem.title = "Now Playing"
         nowPlayingNavigationController.tabBarItem.image = UIImage(named: "now_playing")
         
@@ -36,9 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set up the Tab Bar Controller to have two tabs
         let tabBarController = UITabBarController()
-//        tabBarController.tabBar.isTranslucent = true
-//        tabBarController.tabBar.barTintColor = #colorLiteral(red: 0.1411764771, green: 0.3960784376, blue: 0.5647059083, alpha: 1)
-        tabBarController.viewControllers = [nowPlayingViewController, topRatedViewController]
+        tabBarController.viewControllers = [nowPlayingNavigationController, topRatedNavigationController]
         
         // Make the Tab Bar Controller the root view controller
         window?.rootViewController = tabBarController
